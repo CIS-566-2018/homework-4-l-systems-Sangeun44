@@ -1,40 +1,30 @@
+import { Dictionary } from "lodash";
+import * as OBJ from 'webgl-obj-loader';
+
+var gl = canvas.getContext('webgl');
+var objStr = document.getElementById('my_cube.obj').innerHTML;
+var mesh = new OBJ.Mesh(objStr);
+ 
+// use the included helper function to initialize the VBOs
+// if you don't want to use this function, have a look at its
+// source to see how to use the Mesh instance.
+OBJ.initMeshBuffers(gl, mesh);
+// have a look at the initMeshBuffers docs for an exmample of how to
+// render the model at this point
+
 // A class that represents a symbol replacement rule to
 // be used when expanding an L-system grammar.
-function Rule(prob, str) {
+function Rule(prob: number, str: String) {
 	this.probability = prob; // The probability that this Rule will be used when replacing a character in the grammar string
 	this.successorString = str; // The string that will replace the char that maps to this Rule
 }
 
-// TODO: Implement a linked list class and its requisite functions
-// as described in the homework writeup
-
-// TODO: Turn the string into linked list 
-export function stringToLinkedList(input_string) {
-	// ex. assuming input_string = "F+X"
-	// you should return a linked list where the head is 
-	// at Node('F') and the tail is at Node('X')
-	var ll = new LinkedList();
-	return ll;
-}
-
-// TODO: Return a string form of the LinkedList
-export function linkedListToString(linkedList) {
-	// ex. Node1("F")->Node2("X") should be "FX"
-	var result = "";
-	return result;
-}
-
-// TODO: Given the node to be replaced, 
-// insert a sub-linked-list that represents replacementString
-function replaceNode(linkedList, node, replacementString) {
-}
-
-export default function Lsystem(axiom, grammar, iterations) {
+export default function Lsystem(axiom: String, grammar: String, iterations: number) {
 	// default LSystem
 	this.axiom = "FX";
 	this.grammar = {};
 	this.grammar['X'] = [
-		new Rule(1.0, '[-FX][+FX]')
+		Rule(1.0, 'S[-FX]+FX')
 	];
 	this.iterations = 0; 
 	
@@ -57,7 +47,7 @@ export default function Lsystem(axiom, grammar, iterations) {
 
 	// A function to alter the axiom string stored 
 	// in the L-system
-	this.updateAxiom = function(axiom) {
+	this.updateAxiom = function(axiom: String) {
 		// Setup axiom
 		if (typeof axiom !== "undefined") {
 			this.axiom = axiom;
