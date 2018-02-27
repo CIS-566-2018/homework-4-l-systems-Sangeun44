@@ -17,12 +17,15 @@ import * as fs from 'fs';
 //l-sys
 import Lsystem from './lsystem';
 
+//turtle
+import Turtle from './turtle';
+
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
   shaders: 'lambert',
-  shape: 'cube',
-  color: [80, 40, 1, 0.9], // CSS string
+  shape: 'tree',
+  color: [255, 0, 105, 1.0], // CSS string
   tesselations: 5,
   'Load Scene': loadScene // A function pointer, essentially
 };
@@ -38,14 +41,11 @@ let tree: Tree;
 let count: number = 0.0;
 
 function loadScene() {
-  // icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, controls.tesselations);
-  // icosphere.create();
-  // square = new Square(vec3.fromValues(0, 0, 0));
-  // square.create();
-  cube = new Cube(vec3.fromValues(0, 0, 0));
-  cube.create();
   cylinder = new Cylinder(vec3.fromValues(0, 0, 0));
-  cylinder.create();
+  cylinder.addMeshData();
+  tree = new Tree(vec3.fromValues(0,0,0));
+  tree.addCylinder(cylinder);
+  tree.create();
 }
 
 function main() {
@@ -54,6 +54,7 @@ function main() {
   var iteration = 2;
   var lsys = new Lsystem(axiom, iteration);
   var path = lsys.createPath(); //create string path
+  console.log(path);
 
   // Initial display for framerate
   const stats = Stats();
@@ -66,10 +67,10 @@ function main() {
   // Add controls to the gui
   const gui = new DAT.GUI();
   gui.addColor(controls, 'color');
-  gui.add(controls, 'shaders', ['lambert', 'vertex']);
+  gui.add(controls, 'shaders', ['lambert', 'tree']);
   gui.add(controls, 'tesselations', 0, 8).step(1);
   gui.add(controls, 'Load Scene');
-  gui.add(controls, 'shape', ['cube', 'square', 'icosphere']);
+  gui.add(controls, 'shape', ['tree']);
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
@@ -120,15 +121,7 @@ function main() {
       gl.viewport(0, 0, window.innerWidth, window.innerHeight);
       renderer.clear();
 
-      if(controls.shape === 'cube') {
-        renderer.render(camera, lambert, [cylinder]);
-      }
-      else if(controls.shape === 'square') {
-        renderer.render(camera, lambert, [square]);
-      }
-      else if(controls.shape === 'icosphere') {
-        renderer.render(camera, lambert, [icosphere]);
-      }
+      renderer.render(camera, lambert, [tree]);
     }
 
     stats.end();

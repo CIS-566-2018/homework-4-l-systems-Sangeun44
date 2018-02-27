@@ -1,6 +1,7 @@
 import {vec3, vec4} from 'gl-matrix';
 import Drawable from '../rendering/gl/Drawable';
 import {gl} from '../globals';
+import Cylinder from './Cylinder';
 
 class Tree extends Drawable {
   indices: Uint32Array;
@@ -18,40 +19,46 @@ class Tree extends Drawable {
     this.indices = new Uint32Array([]);
     this.positions = new Float32Array([]);
     this.normals = new Float32Array([]);
-  }
-  addInd(one: Array<number>) {
-    for(var i = 0; i < one.length; ++i) {
-      this.ind.push(one[i]);
-    }
-  }
-  
-  addNormals(one: Array<number>) {
-    for(var i = 0; i < one.length; ++i) {
-      this.pos.push(one[i]);
-    }  
+
+    this.ind = new Array<number>();
+    this.pos = new Array<number>();
+    this.norm = new Array<number>(); 
   }
 
-  addPos(one: Array<number>) {
-    for(var i = 0; i < one.length; ++i) {
-      this.norm.push(one[i]);
-    }   
+  addCylinder(cyl: Cylinder) {
+    var objInd = new Array<number>();
+    objInd = cyl.getInd();
+    var objNorm = new Array<number>();
+    objNorm = cyl.getNorm();
+    var objPos = new Array<number>();
+    objPos = cyl.getPos();
+
+    for(var i = 0; i < objPos.length; ++i) {
+      this.pos.push(objPos[i]);
+      console.log("pos:" + objPos[i]);
+    } 
+    for(var i = 0; i < objNorm.length; ++i) {
+      this.norm.push(objNorm[i]);
+      console.log("norms:" + objNorm[i]);
+    } 
+    
+    if(this.ind.length > 0) {
+      var lastInd = this.ind[3];
+    } else {
+      var lastInd = 0;
+    }
+    console.log("beg Ind: " + lastInd);
+    for(var i = 0; i < objInd.length; ++i) {
+      this.ind.push(objInd[i] + lastInd);
+      console.log("ind:" + objInd[i]);
+    }
+
   }
 
   create() {
-
-  this.indices = new Uint32Array([0, 1, 2,
-                                0, 2, 3
-                                ]);
-  this.normals = new Float32Array([0, 0, 1, 0,
-                                   0, 0, 1, 0,
-                                   0, 0, 1, 0,
-                                   0, 0, 1, 0,
-                                   ]);
-  this.positions = new Float32Array([-1, -1, 0, 1,
-                                     1, -1, 0, 1,
-                                     1, 1, 0, 1,
-                                     -1, 1, 0, 1,
-                                    ]);
+    this.indices = Uint32Array.from(this.ind);
+    this.positions = Float32Array.from(this.pos);
+    this.normals = Float32Array.from(this.norm);
 
     this.generateIdx();
     this.generatePos();

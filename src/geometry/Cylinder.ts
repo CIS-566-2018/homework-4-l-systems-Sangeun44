@@ -27,18 +27,30 @@ class Cylinder extends Drawable {
   }
 
   getInd = function() {
-   return this.objInd;
+   return this.indices;
   }
   
   getNorm = function() {
-    return this.objNorm;
+    return this.normals;
   }
 
-  addPos = function() {
-    return this.objPos;
+  getPos = function() {
+    return this.positions;
   }
 
-  create() {
+  setInd = function(ind : Array<number>) {
+    this.indices = Uint32Array.from(ind);
+   }
+   
+  setNorm = function(norm : Array<number>) {
+    this.normals = Float32Array.from(norm);
+   }
+ 
+   setPos = function(pos : Array<number>) {
+    this.positions = Float32Array.from(pos);
+   }
+
+  addMeshData() {
     var objInd = new Array<number>();
     var objPos = new Array<number>();
     var objNorm = new Array<number>();
@@ -65,24 +77,25 @@ class Cylinder extends Drawable {
   this.normals = Float32Array.from(objNorm);
   this.positions = Float32Array.from(objPos);
 
-  //OBJ mesh buffer
-  //OBJ.initMeshBuffers(gl, this.mesh);
+    // this.generateIdx();
+    // this.generatePos();
+    // this.generateNor();
 
-    this.generateIdx();
-    this.generatePos();
-    this.generateNor();
+    // this.count = this.indices.length;
+    // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.bufIdx);
+    // gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indices, gl.STATIC_DRAW);
 
-    this.count = this.indices.length;
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.bufIdx);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indices, gl.STATIC_DRAW);
+    // gl.bindBuffer(gl.ARRAY_BUFFER, this.bufNor);
+    // gl.bufferData(gl.ARRAY_BUFFER, this.normals, gl.STATIC_DRAW);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.bufNor);
-    gl.bufferData(gl.ARRAY_BUFFER, this.normals, gl.STATIC_DRAW);
+    // gl.bindBuffer(gl.ARRAY_BUFFER, this.bufPos);
+    // gl.bufferData(gl.ARRAY_BUFFER, this.positions, gl.STATIC_DRAW);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.bufPos);
-    gl.bufferData(gl.ARRAY_BUFFER, this.positions, gl.STATIC_DRAW);
+    // console.log(`Created cylinder`);
+  }
+  
+  create() {
 
-    console.log(`Created cylinder`);
   }
 };
 
