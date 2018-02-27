@@ -18,8 +18,6 @@ import * as fs from 'fs';
 import Lsystem from './lsystem';
 import createTree from './lsystem';
 
-//obj
-var OBJ = require('webgl-obj-loader');
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
@@ -35,14 +33,8 @@ const controls = {
 let icosphere: Icosphere;
 let square: Square;
 let cylinder: Cylinder;
-let tree: Tree;
 let cube: Cube;
-let mesh: any;
 
-//  
-var verts : Array<number>;
-var vertNorm : Array<number>;
-var indices : Array<number>;
 //time
 let count: number = 0.0;
 
@@ -83,24 +75,6 @@ function main() {
   // `setGL` is a function imported above which sets the value of `gl` in the `globals.ts` module.
   // Later, we can import `gl` from `globals.ts` to access it
   setGL(gl);
-  //obj loader
-  var objStr = document.getElementById('my_cube.obj').innerHTML;
-  mesh = new OBJ.Mesh(objStr); 
-  
-  //obj loader
-  verts = mesh.vertices; //vertices array
-  vertNorm = mesh.vertNormals; //vertices normals
-  indices = mesh.indices; //indices
-    
-  console.log("this: " + verts[0] + verts[1] + verts[2] + verts[3]);
-  
-  //add obj to cylinder obj
-  cylinder.addInd(verts);
-  cylinder.addNorm(vertNorm);
-  cylinder.addPos(verts);
-
-  //OBJ mesh buffer
-  OBJ.initMeshBuffers(gl, mesh);
 
   // Initial call to load scene
   loadScene();
