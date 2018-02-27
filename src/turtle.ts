@@ -1,6 +1,6 @@
 import {vec3, vec4, mat3, mat4} from 'gl-matrix';
 import Tree from './geometry/Tree';
-
+import Cylinder from './geometry/Cylinder';
 var Quaternion = require('quaternion');
 
 // A class used to encapsulate the state of a turtle at a given moment.
@@ -61,10 +61,14 @@ var rotateZ = function(theta:number) {
 
 export default class Turtle {
     state: any = TurtleState(vec3.fromValues(0,0,0), vec3.fromValues(0,1,0), 0);
-    scene: Tree;
+    tree: Tree;
+    path: string;
+    stack: [];
 
-    constructor(scene: Tree, grammar: String) {
+    constructor(tree: Tree, path: string) {
         this.state = TurtleState(vec3.fromValues(0,0,0), vec3.fromValues(0,1,0), 0);
+        this.tree = tree;
+        this.path = path;
     }
 
     // Resets the turtle's position to the origin
@@ -104,4 +108,15 @@ export default class Turtle {
         this.state.pos.add(newVec);
     };
     
+    draw() {
+        for(var i = 0; i < this.path.length; ++i) {
+            var currentChar = this.path.charAt(i);
+            if(currentChar === "F") {
+                
+            }
+            else if(currentChar === "S") {
+
+            }
+        }
+    }
 }

@@ -16,8 +16,6 @@ import * as fs from 'fs';
 
 //l-sys
 import Lsystem from './lsystem';
-import createTree from './lsystem';
-
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
@@ -34,15 +32,16 @@ let icosphere: Icosphere;
 let square: Square;
 let cylinder: Cylinder;
 let cube: Cube;
+let tree: Tree;
 
 //time
 let count: number = 0.0;
 
 function loadScene() {
-  icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, controls.tesselations);
-  icosphere.create();
-  square = new Square(vec3.fromValues(0, 0, 0));
-  square.create();
+  // icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, controls.tesselations);
+  // icosphere.create();
+  // square = new Square(vec3.fromValues(0, 0, 0));
+  // square.create();
   cube = new Cube(vec3.fromValues(0, 0, 0));
   cube.create();
   cylinder = new Cylinder(vec3.fromValues(0, 0, 0));
@@ -50,6 +49,12 @@ function loadScene() {
 }
 
 function main() {
+  //lsystem
+  var axiom = "FX";
+  var iteration = 2;
+  var lsys = new Lsystem(axiom, iteration);
+  var path = lsys.createPath(); //create string path
+
   // Initial display for framerate
   const stats = Stats();
   stats.setMode(0);
@@ -78,7 +83,7 @@ function main() {
 
   // Initial call to load scene
   loadScene();
-
+  
   const camera = new Camera(vec3.fromValues(0, 0, 5), vec3.fromValues(0, 0, 0));
 
   const renderer = new OpenGLRenderer(canvas);
@@ -116,7 +121,7 @@ function main() {
       renderer.clear();
 
       if(controls.shape === 'cube') {
-        renderer.render(camera, lambert, [cube]);
+        renderer.render(camera, lambert, [cylinder]);
       }
       else if(controls.shape === 'square') {
         renderer.render(camera, lambert, [square]);
@@ -147,3 +152,10 @@ function main() {
 }
 
 main();
+
+// function doLsystem(lsystem : Lsystem, iterations, turtle) {
+//   var result = lsystem.doIterations(iterations);
+//   turtle.clear();
+//   turtle = new Turtle(turtle.scene, lMesh, branchAngle);
+//   turtle.renderSymbols(result);
+// }

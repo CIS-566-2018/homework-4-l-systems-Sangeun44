@@ -12316,20 +12316,37 @@ class Cylinder extends __WEBPACK_IMPORTED_MODULE_1__rendering_gl_Drawable__["a" 
         var objPos = new Array();
         var objNorm = new Array();
         objInd = this.mesh.indices;
-        //normals
+        console.log("ind" + objInd[0]);
+        // //normals
         for (var i = 0; i < this.mesh.vertexNormals.length; i + 3) {
-            objNorm.push(this.mesh.vertexNormals[i], this.mesh.vertexNormals[i + 1], this.mesh.vertexNormals[i + 2], 0);
+            objNorm.push(this.mesh.vertexNormals[i]);
+            objNorm.push(this.mesh.vertexNormals[i + 1]);
+            objNorm.push(this.mesh.vertexNormals[i + 2]);
+            objNorm.push(0);
         }
-        //vertex positions
-        for (var i = 0; i < this.mesh.vertices.length; i + 3) {
-            console.log("vertices:" + this.mesh.vertices[i] + this.mesh.vertices[i + 1] + this.mesh.vertices[i + 2] + 1);
-            objPos.push(this.mesh.vertices[i], this.mesh.vertices[i + 1], this.mesh.vertices[i + 2], 1);
-        }
-        this.indices = Uint32Array.from(objInd);
-        this.normals = Float32Array.from(objNorm);
-        this.positions = Float32Array.from(objPos);
+        // //vertex positions
+        // for(var i = 0; i < this.mesh.vertices.length; i + 3) {
+        //     console.log("vertices:" + this.mesh.vertices[i] + this.mesh.vertices[i+1] + this.mesh.vertices[i+2] +  1);
+        //     objPos.push(this.mesh.vertices[i], this.mesh.vertices[i+1], this.mesh.vertices[i+2], 1);
+        // }  
+        // this.indices = Uint32Array.from(objInd);
+        // this.normals = Float32Array.from(objNorm);
+        // this.positions = Float32Array.from(objPos);
         //OBJ mesh buffer
         //OBJ.initMeshBuffers(gl, this.mesh);
+        this.indices = new Uint32Array([0, 1, 2,
+            0, 2, 3
+        ]);
+        this.normals = new Float32Array([0, 0, 1, 0,
+            0, 0, 1, 0,
+            0, 0, 1, 0,
+            0, 0, 1, 0,
+        ]);
+        this.positions = new Float32Array([-1, -1, 0, 1,
+            1, -1, 0, 1,
+            1, 1, 0, 1,
+            -1, 1, 0, 1,
+        ]);
         this.generateIdx();
         this.generatePos();
         this.generateNor();

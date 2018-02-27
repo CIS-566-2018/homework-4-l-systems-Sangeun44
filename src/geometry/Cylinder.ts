@@ -1,6 +1,7 @@
 import {vec3, vec4} from 'gl-matrix';
 import Drawable from '../rendering/gl/Drawable';
 import {gl} from '../globals';
+
 //obj
 var OBJ = require('webgl-obj-loader');
 
@@ -11,6 +12,7 @@ class Cylinder extends Drawable {
   center: vec4;
   
   mesh: any;
+  objStr: string;
 
   constructor(center: vec3) {
     super(); // Call the constructor of the super class. This is required.
@@ -20,27 +22,21 @@ class Cylinder extends Drawable {
     this.normals = new Float32Array([]);
 
      //obj loader
-    var objStr = document.getElementById('my_cube.obj').innerHTML;
-    this.mesh = new OBJ.Mesh(objStr); 
+    this.objStr = document.getElementById('why_cylinder.obj').innerHTML;
+    this.mesh = new OBJ.Mesh(this.objStr); 
   }
 
-//   addInd(one: Array<number>) {
-//     for(var i = 0; i < one.length; ++i) {
-//         this.ind.push(one[i]);
-//       }
-//   }
+  getInd = function() {
+   return this.objInd;
+  }
   
-//   addNorm(one: Array<number>) {
-//     for(var i = 0; i < one.length; ++i) {
-//         this.norm.push(one[i]);
-//       }  
-//   }
+  getNorm = function() {
+    return this.objNorm;
+  }
 
-//   addPos(one: Array<number>) {
-//     for(var i = 0; i < one.length; ++i) {
-//         this.pos.push(one[i]);
-//       }  
-//   }
+  addPos = function() {
+    return this.objPos;
+  }
 
   create() {
     var objInd = new Array<number>();
@@ -48,42 +44,29 @@ class Cylinder extends Drawable {
     var objNorm = new Array<number>();
     
     objInd = this.mesh.indices;
-    console.log("ind" + objInd[0]);
     
-    // //normals
-    for(var i = 0; i < this.mesh.vertexNormals.length; i + 3) {
+    //normals
+    for(var i = 0; i < this.mesh.vertexNormals.length; i = i + 3) {
         objNorm.push(this.mesh.vertexNormals[i]);
         objNorm.push(this.mesh.vertexNormals[i+1]); 
         objNorm.push(this.mesh.vertexNormals[i+2]);
         objNorm.push(0);
     }  
 
-    // //vertex positions
-    // for(var i = 0; i < this.mesh.vertices.length; i + 3) {
-    //     console.log("vertices:" + this.mesh.vertices[i] + this.mesh.vertices[i+1] + this.mesh.vertices[i+2] +  1);
-    //     objPos.push(this.mesh.vertices[i], this.mesh.vertices[i+1], this.mesh.vertices[i+2], 1);
-    // }  
+    //vertex positions
+    for(var i = 0; i < this.mesh.vertices.length; i = i + 3) {
+        objPos.push(this.mesh.vertices[i]);
+        objPos.push(this.mesh.vertices[i+1]);
+        objPos.push(this.mesh.vertices[i+2]);
+        objPos.push(1);
+    }  
 
-  // this.indices = Uint32Array.from(objInd);
-  // this.normals = Float32Array.from(objNorm);
-  // this.positions = Float32Array.from(objPos);
+  this.indices = Uint32Array.from(objInd);
+  this.normals = Float32Array.from(objNorm);
+  this.positions = Float32Array.from(objPos);
 
   //OBJ mesh buffer
   //OBJ.initMeshBuffers(gl, this.mesh);
-
-  this.indices = new Uint32Array([0, 1, 2,
-    0, 2, 3
-    ]);
-  this.normals = new Float32Array([0, 0, 1, 0,
-       0, 0, 1, 0,
-       0, 0, 1, 0,
-       0, 0, 1, 0,
-       ]);
-  this.positions = new Float32Array([-1, -1, 0, 1,
-         1, -1, 0, 1,
-         1, 1, 0, 1,
-         -1, 1, 0, 1,
-        ]);
 
     this.generateIdx();
     this.generatePos();
