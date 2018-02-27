@@ -8,6 +8,10 @@ class Tree extends Drawable {
   normals: Float32Array;
   center: vec4;
 
+  ind : Array<number>;
+  pos : Array<number>;
+  norm : Array<number>;
+  
   constructor(center: vec3) {
     super(); // Call the constructor of the super class. This is required.
     this.center = vec4.fromValues(center[0], center[1], center[2], 1);
@@ -15,17 +19,22 @@ class Tree extends Drawable {
     this.positions = new Float32Array([]);
     this.normals = new Float32Array([]);
   }
-
-  addInd(one: vec3) {
-    
+  addInd(one: Array<number>) {
+    for(var i = 0; i < one.length; ++i) {
+      this.ind.push(one[i]);
+    }
   }
   
-  addNormals() {
-
+  addNormals(one: Array<number>) {
+    for(var i = 0; i < one.length; ++i) {
+      this.pos.push(one[i]);
+    }  
   }
 
-  addPos() {
-
+  addPos(one: Array<number>) {
+    for(var i = 0; i < one.length; ++i) {
+      this.norm.push(one[i]);
+    }   
   }
 
   create() {
