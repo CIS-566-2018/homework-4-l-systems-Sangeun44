@@ -35,22 +35,24 @@ class Tree extends Drawable {
 
     for(var i = 0; i < objPos.length; ++i) {
       this.pos.push(objPos[i]);
-      console.log("pos:" + objPos[i]);
+      // console.log("pos:" + objPos[i]);
     } 
     for(var i = 0; i < objNorm.length; ++i) {
       this.norm.push(objNorm[i]);
-      console.log("norms:" + objNorm[i]);
+      // console.log("norms:" + objNorm[i]);
     } 
-    
+
     if(this.ind.length > 0) {
-      var lastInd = this.ind[3];
+      var lastInd = this.ind[this.ind.length - 1] + 4;
     } else {
       var lastInd = 0;
     }
-    console.log("beg Ind: " + lastInd);
+    // console.log("beg Ind: " + lastInd);
     for(var i = 0; i < objInd.length; ++i) {
+      console.log("index: " + lastInd);
+      console.log("index num: " + objInd.length);
       this.ind.push(objInd[i] + lastInd);
-      console.log("ind:" + objInd[i]);
+      // console.log("ind:" + objInd[i]);
     }
 
   }

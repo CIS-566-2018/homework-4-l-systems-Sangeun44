@@ -41,10 +41,8 @@ let tree: Tree;
 let count: number = 0.0;
 
 function loadScene() {
-  cylinder = new Cylinder(vec3.fromValues(0, 0, 0));
-  cylinder.addMeshData();
-  tree = new Tree(vec3.fromValues(0,0,0));
-  tree.addCylinder(cylinder);
+  cylinder = new Cylinder(vec3.fromValues(0,1,0));
+  cylinder.create();
   tree.create();
 }
 
@@ -55,6 +53,12 @@ function main() {
   var lsys = new Lsystem(axiom, iteration);
   var path = lsys.createPath(); //create string path
   console.log(path);
+
+  tree = new Tree(vec3.fromValues(0,0,0));
+
+  //turle action
+  var turtle = new Turtle(tree, path);
+  turtle.draw();
 
   // Initial display for framerate
   const stats = Stats();
@@ -67,7 +71,7 @@ function main() {
   // Add controls to the gui
   const gui = new DAT.GUI();
   gui.addColor(controls, 'color');
-  gui.add(controls, 'shaders', ['lambert', 'tree']);
+  gui.add(controls, 'shaders', ['lambert']);
   gui.add(controls, 'tesselations', 0, 8).step(1);
   gui.add(controls, 'Load Scene');
   gui.add(controls, 'shape', ['tree']);
@@ -88,7 +92,7 @@ function main() {
   const camera = new Camera(vec3.fromValues(0, 0, 5), vec3.fromValues(0, 0, 0));
 
   const renderer = new OpenGLRenderer(canvas);
-  renderer.setClearColor(0.2, 0.2, 0.2, 1);
+  renderer.setClearColor(0.7, 0.7, 0.9, 1);
   gl.enable(gl.DEPTH_TEST);
 
   const vertex = new ShaderProgram([
@@ -100,13 +104,6 @@ function main() {
     new Shader(gl.VERTEX_SHADER, require('./shaders/lambert-vert.glsl')),
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/lambert-frag.glsl')),
   ]);
-
- 
-// use the included helper function to initialize the VBOs
-// if you don't want to use this function, have a look at its
-// source to see how to use the Mesh instance.
-  // const lsys = Lsystem("FX", "S[-FX]+FX", 2.);
-  //let expandedGrammar = lsys.createPath
 
   // This function will be called every frame
   function tick() {
@@ -122,6 +119,8 @@ function main() {
       renderer.clear();
 
       renderer.render(camera, lambert, [tree]);
+      //tester cylinder
+      //renderer.render(camera, lambert, [cylinder]);
     }
 
     stats.end();
@@ -146,9 +145,3 @@ function main() {
 
 main();
 
-// function doLsystem(lsystem : Lsystem, iterations, turtle) {
-//   var result = lsystem.doIterations(iterations);
-//   turtle.clear();
-//   turtle = new Turtle(turtle.scene, lMesh, branchAngle);
-//   turtle.renderSymbols(result);
-// }
