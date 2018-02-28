@@ -79,11 +79,11 @@ void main()
                                                             //lit by our point light are not completely black.
         //float fbm = fbm(vec2(fs_Pos.x, fs_Pos.y));
 
-        vec3 a = vec3(0.9 * cos(u_Time * .01), 0.5, 0.5);
-        vec3 b = vec3(0.9, 0.5* cos(u_Time * .01), 0.5);
+        vec3 a = vec3(0.9 * cos(u_Time * .001), 0.5, 0.5);
+        vec3 b = vec3(0.9, 0.5* cos(u_Time * .001), 0.5);
         vec3 c = vec3(1.0, 1.0, 1.0);
-        vec3 d = vec3(0.0, 0.33*cos(u_Time * .01), 0.67);
-        vec4 color = vec4(a + b  * cos(u_Time * 0.01 * 2.f * 3.14159 * (c * diffuseTerm + d)), 1);
+        vec3 d = vec3(0.0, 0.33*cos(u_Time * .001), 0.67);
+        vec4 color = vec4(a + b  * cos(u_Time * 0.001 * 2.f * 3.14159 * (c * diffuseTerm + d)), 1);
 
         out_Col = vec4(color.rgb * lightIntensity, 1.);
 

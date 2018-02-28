@@ -14,7 +14,7 @@ function Rule(prob: number, str: String) {
 	// default LSystem
 		this.axiom = axiom;
 		this.grammar = {};
-		this.grammar["X"] = "S[+FFFFFFFFFFFFFFXFFFFX]+FFFFFFFFFFFFFFXFFX";
+		this.grammar["X"] = "S[+FFXFFFFFXFFFFFFFX]+FFFFFFFFFFXFFFFFFX";
 		this.iterations = iterations; 
 	}
 

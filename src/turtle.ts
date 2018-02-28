@@ -21,8 +21,9 @@ export default class Turtle {
     tree: Tree;
     path: string;
     tree2: Tree;
+    height: number;
 
-    constructor(tree: Tree, tree2: Tree, path: string) {
+    constructor(tree: Tree, tree2: Tree, path: string, height: number) {
         this.state = TurtleState(vec3.fromValues(0,150,0), vec3.fromValues(0,1,0));
         this.tree = tree;
         this.tree2 = tree2;
@@ -46,11 +47,13 @@ export default class Turtle {
     rotateTurtle(axis: vec3, x : number) {
        //matrices
         var rotMat = this.rotationMatrix(axis, x);
-
-        vec3.transformMat4(this.state.dir, this.state.dir, rotMat);
-
+        var changedDir = vec3.create();
+        vec3.transformMat4(changedDir, this.state.dir, rotMat);
+        vec3.normalize(changedDir, changedDir);
+        if(changedDir[1] > 0) {
+            this.state.dir = changedDir;
+        }
         // this.state.dir = vec3.fromValues(new1, new2, new3);
-        this.state.dir = vec3.normalize(this.state.dir, this.state.dir);
     }
 
     translateVertices(positions: Array<number>) {
@@ -149,27 +152,33 @@ export default class Turtle {
         var stackD = new Array<vec4>();
 
         //random values
-        var width = 70;
-        var dist = 8;
+        var width = 80;
+        var dist = 10;
+        console.log("height: " + this.height);
 
         for(var i = 0; i < this.path.length; ++i) {
             var currentChar = this.path.charAt(i);
             console.log("currentChar:" + currentChar);
             if(currentChar === "F") {
-                var check = Math.floor(Math.random() * 100);
-                if(check < 20) {
-                    var rand1 = Math.floor(Math.random() * 30);  
+                if(i !== 0) {
+                var check = Math.floor(Math.random() * 100) + 2;
+                if(check < 10) {
+                    var rand1 = Math.floor(Math.random() * 10) + 1;  
                     //change angle while going forward
-                    var axis = vec3.fromValues(1,1,1);
+                    var axis = vec3.fromValues(1,0,0);
+                    this.rotateTurtle(axis, rand1); //rotate direction of the turtle
+                    axis = vec3.fromValues(0,1,0);
+                    this.rotateTurtle(axis, rand1); //rotate direction of the turtle
+                    axis = vec3.fromValues(0,0,1);
                     this.rotateTurtle(axis, rand1); //rotate direction of the turtle
                 }
+            }
                 //make a forward cylinder
                 var cylinder = new Cylinder(vec3.fromValues(0, 0, 0));
                 
                 //CHANGE vertices depending on direction of the turtle
                 var posArr = cylinder.getPos();
                 posArr = this.scaleVertices(posArr, width);
-                var axis = vec3.fromValues(1,0,1);
                 posArr = this.rotateVertices(20, posArr);
                 posArr = this.translateVertices(posArr);
                 cylinder.setPos(posArr);
@@ -187,9 +196,9 @@ export default class Turtle {
             else if(currentChar === "[") {
                 //start branch    
                 var check = Math.floor(Math.random() * 100);
-                if(check > 70) {
-                    var rand1 = Math.floor(Math.random() * 10);  
-                    if(width - rand1 > 10) {
+                if(check > 80) {
+                    var rand1 = Math.floor(Math.random() * 2) + 1;  
+                    if(width - rand1 > 0) {
                         width -= rand1;
                     }
                 }
@@ -198,9 +207,9 @@ export default class Turtle {
             else if(currentChar === "]") {
                 //change width/scale
                 var check = Math.floor(Math.random() * 100);
-                if(check > 70) {
-                    var rand1 = Math.floor(Math.random() * 10);  
-                    if(width + rand1 < 20) {
+                if(check > 80) {
+                    var rand1 = Math.floor(Math.random() * 5) + 1;  
+                    if(width + rand1 < 40) {
                         width += rand1;
                     }
                 } 
@@ -212,7 +221,7 @@ export default class Turtle {
             }
             else if(currentChar === "X") {
                 var check = Math.floor(Math.random() * 100);  
-                if(check > 60) {
+                if(check > 40) {
                     var flower = new Flower(vec3.fromValues(0, 0, 0));
                     posArr = flower.getPos();   
                     posArr = this.scaleVertices(flower.getPos(), 90);
@@ -223,36 +232,44 @@ export default class Turtle {
                 }
             }
             else if(currentChar === "+") {
-                var max = 360; 
+                var max = 20; 
                 var min = 0;
                 //change angle
                 var check = Math.floor(Math.random() * 100);  
-                if(check > 30) {
+                if(check > 40) {
                     var rand1 = Math.floor(Math.random() * max) - min;  
                     var axis = vec3.fromValues(1,0,1);
                     this.rotateTurtle(axis, rand1); //rotate direction of the turtle
                 } 
-                else if(check > 50) {
+                else if(check > 70) {
                     var rand1 = Math.floor(Math.random() * max) - min;  
-                    var axis = vec3.fromValues(1,0,1);
-                    this.rotateTurtle(axis, rand1); //rotate direction of the turtle                        
+                    var axis = vec3.fromValues(1,0,0);
+                    this.rotateTurtle(axis, rand1); //rotate direction of the turtle
+                    axis = vec3.fromValues(0,1,0);
+                    this.rotateTurtle(axis, rand1); //rotate direction of the turtle
+                    axis = vec3.fromValues(0,0,1);
+                    this.rotateTurtle(axis, rand1); //rotate direction of the turtle                      
                 } 
            
             }
             else if(currentChar === "-") {
-                var max = 360; 
+                var max = 20; 
                 var min = 0;        
                 //change angle
                         var check = Math.floor(Math.random() * 100);  
-                        if(check > 30) {
+                        if(check > 50) {
                             var rand1 = Math.floor(Math.random() * max) - min ;  
                             var axis = vec3.fromValues(1,0,1);
                             this.rotateTurtle(axis, rand1); //rotate direction of the turtle                        
                         } 
-                        else if(check > 50) {
+                        else if(check > 70) {
                             var rand1 = Math.floor(Math.random() * max) - min;  
-                            var axis = vec3.fromValues(1,0,1);
-                            this.rotateTurtle(axis, rand1); //rotate direction of the turtle                        
+                            var axis = vec3.fromValues(1,0,0);
+                            this.rotateTurtle(axis, rand1); //rotate direction of the turtle
+                            axis = vec3.fromValues(0,1,0);
+                            this.rotateTurtle(axis, rand1); //rotate direction of the turtle
+                            axis = vec3.fromValues(0,0,1);
+                            this.rotateTurtle(axis, rand1); //rotate direction of the turtle                    
                         } 
             }
         }
