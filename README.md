@@ -14,7 +14,11 @@ can either implement your own OBJ parser, or use an OBJ-loading package via NPM:
 Pennkey: eunsang
 Name: Sang Lee
 
+<<<<<<< HEAD
 demo : https://sangeun44.github.io/L-system/
+=======
+demo:  https://sangeun44.github.io/L-system/
+>>>>>>> f853bbc2ba903908e7c93f664782aed7ebf76509
 
 [![](1st.png)]
 
