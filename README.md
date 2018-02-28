@@ -1,13 +1,5 @@
 # Homework 4: L-systems
 
-For this assignment, you will design a set of formal grammar rules to create
-a plant life using an L-system program. Once again, you will work from a
-Typescript / WebGL 2.0 base code like the one you used in homework 0. You will
-implement your own set of classes to handle the L-system grammar expansion and
-drawing. You will rasterize your L-system using faceted geometry. Feel free
-to use ray marching to generate an interesting background, but trying to
-raymarch an entire L-system will take too long to render!
-
 ## L-System Components
 The way you implement your L-System is ultimately up to you, but we recommend
 creating the following classes / constructs to help you instantiate, expand, and
@@ -43,34 +35,19 @@ can either implement your own OBJ parser, or use an OBJ-loading package via NPM:
 [webgl-obj-loader](https://www.npmjs.com/package/webgl-obj-loader)
 
 
-## Aesthetic Requirements
-Your plant must have the following attributes:
-* It must grow in 3D
-* It must have flowers, leaves, or some other branch decoration in addition to
-basic branch geometry
-* Organic variation (i.e. noise or randomness in grammar expansion)
-* A flavorful twist. Don't just make a basic variation on the example broccoli
-grammar from the slides! Create a plant that is unique to you!
-
-Feel free to use the resources linked in the slides for inspiration!
-
-## Interactivity
-Using dat.GUI, make at least three aspects of your demo an interactive variable.
-For example, you could modify:
-
-* The axiom
-* Your input grammar rules and their probability
-* The angle of rotation of the turtle
-* The size or color or material of the cylinder the turtle draws
-
-Don't feel restricted to these examples; make any attributes adjustable that you
-want!
-
 ## WRITE UP
 
 [![](1st.png)]
+
+## Aesthetic REQ
+* Grows in 3D
+*  Best is at 4th iteration
+* Used webgl-obj-loader and uploaded my own 3d models
+* Randomization of angles for branching and crookedness in branches
+* Flowers/polyps are added
 
 ## Interactivity
     *The Axiom is changeable by adjusting the height
     *The color of the coral is changeable by color selection
     *You can change the number of iterations of the grammer
+    
