@@ -17,6 +17,7 @@ Name: Sang Lee
 demo:  https://sangeun44.github.io/L-system/
 
 [![](1st.png)]
+[![](2nd.png)]
 
 ## Aesthetic REQ
 * Grows in 3D
