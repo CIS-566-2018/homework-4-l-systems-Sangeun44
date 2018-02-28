@@ -72,20 +72,37 @@ void main()
         // Avoid negative lighting values
         // diffuseTerm = clamp(diffuseTerm, 0, 1);
 
-        float ambientTerm = 0.8;
+        float ambientTerm = 0.2;
 
         float lightIntensity = diffuseTerm + ambientTerm;   //Add a small float value to the color multiplier
                                                             //to simulate ambient lighting. This ensures that faces that are not
                                                             //lit by our point light are not completely black.
-        //float fbm = fbm(vec2(fs_Pos.x, fs_Pos.y));
+      float fbm = fbm(vec2(fs_Pos.x, fs_Pos.y));
 
-        vec3 a = vec3(0.9 * cos(u_Time * .01), 0.5, 0.5);
-        vec3 b = vec3(0.9, 0.5* cos(u_Time * .01), 0.5);
-        vec3 c = vec3(1.0, 1.0, 1.0);
-        vec3 d = vec3(0.0, 0.33*cos(u_Time * .01), 0.67);
-        vec4 color = vec4(a + b  * cos(u_Time * 0.01 * 2.f * 3.14159 * (c * diffuseTerm + d)), 1);
+        // vec3 a = vec3(0.5 * cos(u_Time*.01), 0.5, 0.5);
+        // vec3 b = vec3(0.5, 0.5* cos(u_Time*.01), 0.5);
+        // vec3 c = vec3(1.0, 1.0, 1.0);
+        // vec3 d = vec3(0.0, 0.33*cos(u_Time*.01), 0.67);
+        // vec4 color = vec4(a + b  * cos(u_Time * 0.01 * fbm * 2.f * 3.14159 * (c * diffuseTerm + d)), 1);
 
-        out_Col = vec4(color.rgb * lightIntensity, 1.);
+        //out_Col = vec4(color.rgb, 1);
+
+    vec4 col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);
+
+    // float greyRed = diffuseColor.x * 0.21;
+    // float greyGreen = diffuseColor.y * 0.72;
+    // float greyBlue = diffuseColor.z * 0.07;
+
+    // float grey = greyRed + greyGreen + greyBlue;
+
+    // if(grey < .1f) {
+    //     out_Col = vec4(0,0,0,1);
+    // }
+    // else {
+    //     out_Col = vec4(color.rgb, 1);
+
+    // }
+
 
         // Compute final shaded color
 

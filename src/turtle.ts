@@ -20,10 +20,12 @@ export default class Turtle {
     state: any = TurtleState(vec3.fromValues(0,0,0), vec3.fromValues(1,1,1));
     tree: Tree;
     path: string;
+    tree2: Tree;
 
-    constructor(tree: Tree, path: string) {
-        this.state = TurtleState(vec3.fromValues(0,0,0), vec3.fromValues(0,1,0));
+    constructor(tree: Tree, tree2: Tree, path: string) {
+        this.state = TurtleState(vec3.fromValues(0,150,0), vec3.fromValues(0,1,0));
         this.tree = tree;
+        this.tree2 = tree2;
         this.path = path;
     }
 
@@ -41,15 +43,11 @@ export default class Turtle {
     }
     
     // Rotate the turtle's _dir_ vector by angles
-    rotateTurtle(x: number, y: number, z: number) {
+    rotateTurtle(axis: vec3, x : number) {
        //matrices
-        var rotX = this.rotateX(x);
-        var rotY = this.rotateY(y - 90);
-        var rotZ = this.rotateZ(z);
+        var rotMat = this.rotationMatrix(axis, x);
 
-        vec3.transformMat3(this.state.dir, this.state.dir, rotX);
-        vec3.transformMat3(this.state.dir, this.state.dir, rotY);
-        vec3.transformMat3(this.state.dir, this.state.dir, rotZ);
+        vec3.transformMat4(this.state.dir, this.state.dir, rotMat);
 
         // this.state.dir = vec3.fromValues(new1, new2, new3);
         this.state.dir = vec3.normalize(this.state.dir, this.state.dir);
@@ -76,15 +74,14 @@ export default class Turtle {
         return newPositions;
     }
 
-    rotateVertices(positions: Array<number>) {
+    rotateVertices(x: number, positions: Array<number>) {
         var dirX = this.state.dir[0];
         var dirY = this.state.dir[1];
         var dirZ = this.state.dir[2];
 
+        var rotMat = this.rotationMatrix(this.state.dir, x);
+
         //matrices
-        var rotX = this.rotateX(dirX);
-        var rotY = this.rotateY(dirY);
-        var rotZ = this.rotateZ(dirZ);
 
         var newPositions = new Array<number>();
         for(var i = 0; i < positions.length; i = i + 4) {
@@ -96,9 +93,7 @@ export default class Turtle {
             //console.log("original: " + positions[i], positions[i+1], positions[i+2]);
             //apply rotation in x, y, z direction to the vertex
             var vert = vec3.fromValues(xCom, yCom, zCom);
-            vec3.transformMat3(vert, vert, rotX);           
-            vec3.transformMat3(vert, vert, rotY);
-            vec3.transformMat3(vert, vert, rotZ);
+            vec3.transformMat4(vert, vert, rotMat);           
 
             newPositions[i] = vert[0];
             newPositions[i+1] = vert[1];
@@ -154,38 +149,35 @@ export default class Turtle {
         var stackD = new Array<vec4>();
 
         //random values
-        var dist = 0;
-        var width = 10;
+        var width = 70;
+        var dist = 8;
 
         for(var i = 0; i < this.path.length; ++i) {
             var currentChar = this.path.charAt(i);
             console.log("currentChar:" + currentChar);
             if(currentChar === "F") {
-                var rand1 = Math.floor(Math.random() * 10);
-                if(rand1 < 3) {
-                    //change angle
-                    var rand2 = Math.floor(Math.random() * 5) + 1;  
-                    rand2 = 2 + rand2;  
-                    //this.moveTurtle(1,0,1);
-                    this.rotateTurtle(0, 0, rand2); //rotate direction of the turtle
+                var check = Math.floor(Math.random() * 100);
+                if(check < 20) {
+                    var rand1 = Math.floor(Math.random() * 30);  
+                    //change angle while going forward
+                    var axis = vec3.fromValues(1,1,1);
+                    this.rotateTurtle(axis, rand1); //rotate direction of the turtle
                 }
-                if(rand1 > 1) {
                 //make a forward cylinder
                 var cylinder = new Cylinder(vec3.fromValues(0, 0, 0));
                 
                 //CHANGE vertices depending on direction of the turtle
                 var posArr = cylinder.getPos();
                 posArr = this.scaleVertices(posArr, width);
-                posArr = this.rotateVertices(posArr);
+                var axis = vec3.fromValues(1,0,1);
+                posArr = this.rotateVertices(20, posArr);
                 posArr = this.translateVertices(posArr);
                 cylinder.setPos(posArr);
                 //add to tree
                 this.tree.addCylinder(cylinder);
                 
                 //update turtle
-                this.moveForward(20);
-                width -= 0.01;
-                }
+                this.moveForward(dist);
             }
             else if(currentChar === "S") {
                 //save turtle state
@@ -194,62 +186,73 @@ export default class Turtle {
             }
             else if(currentChar === "[") {
                 //start branch    
-                var check = Math.floor(Math.random() * 10);
-                if(check > 5) {
-                    var rand1 = Math.floor(Math.random() * 2) + 1;  
-                    if(width - rand1 > 0) {
+                var check = Math.floor(Math.random() * 100);
+                if(check > 70) {
+                    var rand1 = Math.floor(Math.random() * 10);  
+                    if(width - rand1 > 10) {
                         width -= rand1;
                     }
                 }
+                dist -= 1;
             }
             else if(currentChar === "]") {
                 //change width/scale
-                var rand1 = Math.floor(Math.random() * 10) + 1;  
-                if(rand1 > 8) {
-                    if(width + rand1 > 0) {
+                var check = Math.floor(Math.random() * 100);
+                if(check > 70) {
+                    var rand1 = Math.floor(Math.random() * 10);  
+                    if(width + rand1 < 20) {
                         width += rand1;
                     }
                 } 
+                dist += 1;
                 //return to Save point
                 this.state.pos = stackP.pop();
                 var dir = stackD.pop();
                 this.state.dir = vec3.fromValues(dir[0], dir[1], dir[2]);
             }
             else if(currentChar === "X") {
-                var flower = new Flower(vec3.fromValues(this.state.pos[0], this.state.pos[1], this.state.pos[2]));
-                this.tree.addFlower(flower);
+                var check = Math.floor(Math.random() * 100);  
+                if(check > 60) {
+                    var flower = new Flower(vec3.fromValues(0, 0, 0));
+                    posArr = flower.getPos();   
+                    posArr = this.scaleVertices(flower.getPos(), 90);
+                    posArr = this.rotateVertices(40, flower.getPos());
+                    posArr = this.translateVertices(posArr);
+                    flower.setPos(posArr);
+                    this.tree2.addFlower(flower);
+                }
             }
             else if(currentChar === "+") {
+                var max = 360; 
+                var min = 0;
                 //change angle
-                var rand1 = Math.floor(Math.random() * 10) + 1;  
-                if(rand1 > 5) {
-                    var rand1 = Math.floor(Math.random() * 5) + 1;  
-                    var rand2 = Math.floor(Math.random() * 5) + 1;  
-                    rand1 = 30 + rand1;
-                    rand2 = 30 + rand2;  
-                    //this.moveTurtle(1,0,1);
-                    this.rotateTurtle(rand1, 0, rand2); //rotate direction of the turtle
+                var check = Math.floor(Math.random() * 100);  
+                if(check > 30) {
+                    var rand1 = Math.floor(Math.random() * max) - min;  
+                    var axis = vec3.fromValues(1,0,1);
+                    this.rotateTurtle(axis, rand1); //rotate direction of the turtle
+                } 
+                else if(check > 50) {
+                    var rand1 = Math.floor(Math.random() * max) - min;  
+                    var axis = vec3.fromValues(1,0,1);
+                    this.rotateTurtle(axis, rand1); //rotate direction of the turtle                        
                 } 
            
             }
             else if(currentChar === "-") {
-                        //change angle
-                        var rand1 = Math.floor(Math.random() * 10) + 1;  
-                        if(rand1 > 5) {
-                            var rand1 = Math.floor(Math.random() * 5) + 1;  
-                            var rand2 = Math.floor(Math.random() * 5) + 1;  
-                            rand1 = 30 + rand1;
-                            rand2 = 30 + rand2;  
-                            //this.moveTurtle(1,0,1);
-                            this.rotateTurtle(rand1, 0, 0); //rotate direction of the turtle
+                var max = 360; 
+                var min = 0;        
+                //change angle
+                        var check = Math.floor(Math.random() * 100);  
+                        if(check > 30) {
+                            var rand1 = Math.floor(Math.random() * max) - min ;  
+                            var axis = vec3.fromValues(1,0,1);
+                            this.rotateTurtle(axis, rand1); //rotate direction of the turtle                        
                         } 
-                        if(rand1 > 8) {
-                            var rand1 = Math.floor(Math.random() * 5) + 1;  
-                            var rand2 = Math.floor(Math.random() * 5) + 1;  
-                            rand1 = 30 + rand1;
-                            rand2 = 30 + rand2;  
-                            //this.moveTurtle(1,0,1);
-                            this.rotateTurtle(0, 0, rand2); //rotate direction of the turtle
+                        else if(check > 50) {
+                            var rand1 = Math.floor(Math.random() * max) - min;  
+                            var axis = vec3.fromValues(1,0,1);
+                            this.rotateTurtle(axis, rand1); //rotate direction of the turtle                        
                         } 
             }
         }
@@ -286,4 +289,17 @@ rotateZ = function(theta:number) {
         0, 0, 1
     )
 }
+
+rotationMatrix = function(axis : vec3 , angle:number)
+{
+    axis = vec3.normalize(axis, axis);
+    var s = Math.sin(angle);
+    var c = Math.cos(angle);
+    var oc = 1.0 - c;
+    
+    return mat4.fromValues(oc * axis[0] * axis[0] + c,           oc * axis[0] * axis[1] - axis[2] * s,  oc * axis[2] * axis[0] + axis[1] * s,  0.0,
+                oc * axis[0] * axis[1] + axis[2] * s,  oc * axis[1] * axis[1] + c,           oc * axis[1] * axis[2] - axis[0] * s,  0.0,
+                oc * axis[2] * axis[0] - axis[1] * s,  oc * axis[1] * axis[2] + axis[0] * s,  oc * axis[2] * axis[2] + c,           0.0,
+                0.0,                                0.0,                                0.0,                                1.0);
+}     
 }

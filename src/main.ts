@@ -26,9 +26,10 @@ import Turtle from './turtle';
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
   shaders: 'lambert',
-  shape: 'tree',
+  shape: 'coral',
   color: [255, 0, 105, 1.0], // CSS string
-  tesselations: 5,
+  iterations: 3,
+  height: 20,
   'Load Scene': loadScene // A function pointer, essentially
 };
 
@@ -38,38 +39,50 @@ let square: Square;
 let cylinder: Cylinder;
 let cube: Cube;
 let flower: Flower;
-let tree: Tree;
+let tree1: Tree;
+let tree2: Tree;
 let base: Base;
 
+let iteration: number;
+let axiom: string;
 //time
 let count: number = 0.0;
 
 function loadScene() {
   cylinder = new Cylinder(vec3.fromValues(0,0,0));
   cylinder.create();
-  tree.create();
   flower = new Flower(vec3.fromValues(0,0,0));
   flower.create();
   base = new Base(vec3.fromValues(0,0,0));
   base.create();
   square = new Square(vec3.fromValues(0,0,0));
   square.create();
+  tree1.create();
+  tree2.create();
 }
 
 function main() {
-  //lsystem
-  var axiom = "FFFFFFFFFFFFFX";
-  var iteration = 2;
-  var lsys = new Lsystem(axiom, iteration);
-  var path = lsys.createPath(); //create string path
-  console.log(path);
+    //lsystem
+    var axiomStr = "";
+    // axiomStr += "FXS";
+    for(var i =0; i < controls.height; ++i) {
+      axiomStr = axiomStr + "F";
+    }
+    axiomStr += "X";
+  
 
-  tree = new Tree(vec3.fromValues(0,0,0));
+    axiom = axiomStr;
+    iteration = controls.iterations;
+    var lsys = new Lsystem(axiom, iteration);
+    var path = lsys.createPath(); //create string path
 
-  //turle action
-  var turtle = new Turtle(tree, path);
-  turtle.draw();
+    tree1 = new Tree(vec3.fromValues(0,0,0));
+    tree2 = new Tree(vec3.fromValues(0,0,0));
+     //turle action
+    var turtle = new Turtle(tree1, tree2, path);
+    turtle.draw();
 
+    
   // Initial display for framerate
   const stats = Stats();
   stats.setMode(0);
@@ -82,9 +95,10 @@ function main() {
   const gui = new DAT.GUI();
   gui.addColor(controls, 'color');
   gui.add(controls, 'shaders', ['lambert']);
-  gui.add(controls, 'tesselations', 0, 8).step(1);
+  gui.add(controls, 'height', 10, 20).step(1);
+  gui.add(controls, 'iterations', 0, 5).step(1);
+  gui.add(controls, 'shape', ['coral']);
   gui.add(controls, 'Load Scene');
-  gui.add(controls, 'shape', ['tree']);
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
@@ -99,7 +113,7 @@ function main() {
   // Initial call to load scene
   loadScene();
   
-  const camera = new Camera(vec3.fromValues(500, 300, 50), vec3.fromValues(0, 0, 0));
+  const camera = new Camera(vec3.fromValues(-400, 100, -300), vec3.fromValues(0, 0, 0));
 
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.3, 0.7, 0.9, 1);
@@ -120,22 +134,86 @@ function main() {
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/base-lambert-frag.glsl')),
   ]);
 
+  const water_shader = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require('./shaders/water-shader-vert.glsl')),
+    new Shader(gl.FRAGMENT_SHADER, require('./shaders/water-shader-frag.glsl')),
+  ]);
+
+  var it = controls.iterations;
+  var ta = controls.height;
   // This function will be called every frame
   function tick() {
-    let new_color = vec4.fromValues(controls.color[0]/256, controls.color[1]/256, controls.color[2]/256, 1);
-    let base_color = vec4.fromValues(62/256, 243/256, 255/256, 1);
+    count++;
+    vertex.setTime(count)
+    
+    var axiom = axiomStr;
+    let new_color = vec4.fromValues(controls.color[0]/255, controls.color[1]/255, controls.color[2]/255, 1);
+    let base_color = vec4.fromValues(64/255, 255/255, 255/255, 1);
       tree_lambert.setGeometryColor(new_color);  
+      base_lambert.setGeometryColor(base_color);
       camera.update();
       stats.begin();
-  
+
+      var height = controls.height;
+      if(ta !== height) {
+        var axiomStr = "";
+        for(var i =0; i < controls.height; ++i) {
+          axiomStr = axiomStr + "F";
+        }
+        axiomStr += "X";
+        axiom = axiomStr;
+        console.log(axiom);
+
+        var lsys = new Lsystem(axiom, iteration);
+        var path = lsys.createPath(); //create string path
+
+        tree1 = new Tree(vec3.fromValues(0,0,0));
+        tree2 = new Tree(vec3.fromValues(0,0,0));
+
+        //turle action
+       var turtle = new Turtle(tree1, tree2, path);
+       turtle.draw();
+   
+       tree1.create();
+       tree2.create();
+
+       ta = height;
+      }
+
+      //change in tree
+      iteration = controls.iterations;
+      if(it !== iteration){
+        var axiomStr = "";
+        for(var i =0; i < controls.height; ++i) {
+          axiomStr = axiomStr + "F";
+        }
+        axiomStr += "X";
+        axiom = axiomStr;
+       //lsystem
+        var lsys = new Lsystem(axiom, iteration);
+        var path = lsys.createPath(); //create string path
+
+        tree1 = new Tree(vec3.fromValues(0,0,0));
+        tree2 = new Tree(vec3.fromValues(0,0,0));
+
+         //turle action
+        var turtle = new Turtle(tree1, tree2, path);
+        turtle.draw();
+        
+        tree1.create();
+        tree2.create();
+      }
+      it = iteration;
+
       gl.viewport(0, 0, window.innerWidth, window.innerHeight);
       renderer.clear();
 
       //renderer.render(camera, tree_lambert, [flower]);
-      renderer.render(camera, tree_lambert, [tree]);
-
+      renderer.render(camera, tree_lambert, [tree1]);
+      renderer.render(camera, vertex, [tree2]);
+      renderer.render(camera, tree_lambert, [base]);
       base_lambert.setGeometryColor(base_color);
-      renderer.render(camera, base_lambert, [base, square]);
+      renderer.render(camera, base_lambert, [square]);
       //tester cylinder
       //renderer.render(camera, tree_lambert, [flower]);
 

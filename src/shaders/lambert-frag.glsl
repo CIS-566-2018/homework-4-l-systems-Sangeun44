@@ -54,10 +54,10 @@ void main()
                                                             //lit by our point light are not completely black.
 
         // Compute final shaded color
-        vec3 color = mix(vec3(230.f / 255.f, 200.f/255.f, 230.f/255.f), 
+        vec3 color = mix(diffuseColor.xyz, 
                         vec3(123.f/255.f, 136.f/255.f, 219.f/255.f), 1.) +
                         mix(0.f, specularIntensity, 2.);
-        vec3 color2 = vec3(10.f/255.f, 12.f/255.f, 12.f/255.f);
+        vec3 color2 = diffuseColor.xyz;
 
         out_Col = vec4(mix(color, color2, fs_Col.x) * lightIntensity, diffuseColor.a);
 }
