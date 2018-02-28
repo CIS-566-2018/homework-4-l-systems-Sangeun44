@@ -66,6 +66,11 @@ For example, you could modify:
 Don't feel restricted to these examples; make any attributes adjustable that you
 want!
 
-##WRITE UP
+## WRITE UP
 
 [![](1st.png)]
+
+## Interactivity
+    *The Axiom is changeable by adjusting the height
+    *The color of the coral is changeable by color selection
+    *You can change the number of iterations of the grammer
