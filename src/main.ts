@@ -6,13 +6,15 @@ import Icosphere from './geometry/Icosphere';
 import Square from './geometry/Square';
 import Cube from './geometry/Cube';
 import Cylinder from './geometry/Cylinder';
+import Flower from './geometry/flower';
 import Tree from './geometry/Tree';
+import Base from './geometry/Base';
 
 import OpenGLRenderer from './rendering/gl/OpenGLRenderer';
 import Camera from './Camera';
 import {setGL} from './globals';
 import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
-import * as fs from 'fs';
+//import * as fs from 'fs';
 
 //l-sys
 import Lsystem from './lsystem';
@@ -35,20 +37,28 @@ let icosphere: Icosphere;
 let square: Square;
 let cylinder: Cylinder;
 let cube: Cube;
+let flower: Flower;
 let tree: Tree;
+let base: Base;
 
 //time
 let count: number = 0.0;
 
 function loadScene() {
-  cylinder = new Cylinder(vec3.fromValues(0,1,0));
+  cylinder = new Cylinder(vec3.fromValues(0,0,0));
   cylinder.create();
   tree.create();
+  flower = new Flower(vec3.fromValues(0,0,0));
+  flower.create();
+  base = new Base(vec3.fromValues(0,0,0));
+  base.create();
+  square = new Square(vec3.fromValues(0,0,0));
+  square.create();
 }
 
 function main() {
   //lsystem
-  var axiom = "FX";
+  var axiom = "FFFFFFFFFFFFFX";
   var iteration = 2;
   var lsys = new Lsystem(axiom, iteration);
   var path = lsys.createPath(); //create string path
@@ -89,10 +99,10 @@ function main() {
   // Initial call to load scene
   loadScene();
   
-  const camera = new Camera(vec3.fromValues(0, 0, 5), vec3.fromValues(0, 0, 0));
+  const camera = new Camera(vec3.fromValues(500, 300, 50), vec3.fromValues(0, 0, 0));
 
   const renderer = new OpenGLRenderer(canvas);
-  renderer.setClearColor(0.7, 0.7, 0.9, 1);
+  renderer.setClearColor(0.3, 0.7, 0.9, 1);
   gl.enable(gl.DEPTH_TEST);
 
   const vertex = new ShaderProgram([
@@ -100,28 +110,34 @@ function main() {
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/vertex-frag.glsl')),
   ]);
 
-  const lambert = new ShaderProgram([
+  const tree_lambert = new ShaderProgram([
     new Shader(gl.VERTEX_SHADER, require('./shaders/lambert-vert.glsl')),
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/lambert-frag.glsl')),
+  ]);
+
+  const base_lambert = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require('./shaders/base-lambert-vert.glsl')),
+    new Shader(gl.FRAGMENT_SHADER, require('./shaders/base-lambert-frag.glsl')),
   ]);
 
   // This function will be called every frame
   function tick() {
     let new_color = vec4.fromValues(controls.color[0]/256, controls.color[1]/256, controls.color[2]/256, 1);
-    
-    if(controls.shaders === 'lambert') {
-      lambert.setGeometryColor(new_color);  
-      
+    let base_color = vec4.fromValues(62/256, 243/256, 255/256, 1);
+      tree_lambert.setGeometryColor(new_color);  
       camera.update();
       stats.begin();
   
       gl.viewport(0, 0, window.innerWidth, window.innerHeight);
       renderer.clear();
 
-      renderer.render(camera, lambert, [tree]);
+      //renderer.render(camera, tree_lambert, [flower]);
+      renderer.render(camera, tree_lambert, [tree]);
+
+      base_lambert.setGeometryColor(base_color);
+      renderer.render(camera, base_lambert, [base, square]);
       //tester cylinder
-      //renderer.render(camera, lambert, [cylinder]);
-    }
+      //renderer.render(camera, tree_lambert, [flower]);
 
     stats.end();
 

@@ -5,11 +5,6 @@ function Rule(prob: number, str: String) {
 	this.successorString = str; // The string that will replace the char that maps to this Rule
 }
 
-// export function createTree() {
-	
-// }
-
-
  export default class Lsystem{
 	axiom : string;
 	grammar : { [id: string] : string; } = {};	
@@ -19,7 +14,7 @@ function Rule(prob: number, str: String) {
 	// default LSystem
 		this.axiom = axiom;
 		this.grammar = {};
-		this.grammar["X"] = "S[+FX][-FX]+FX";
+		this.grammar["X"] = "S[+FFFFX]S[+FFFFX]S[-FFFFX]S[+FFFFX]-FFFFX";
 		this.iterations = iterations; 
 	}
 

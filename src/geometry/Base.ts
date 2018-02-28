@@ -5,7 +5,7 @@ import {gl} from '../globals';
 //obj
 var OBJ = require('webgl-obj-loader');
 
-class Cylinder extends Drawable {
+class Base extends Drawable {
   indices: Uint32Array;
   positions: Float32Array;
   normals: Float32Array;
@@ -22,7 +22,7 @@ class Cylinder extends Drawable {
     this.normals = new Float32Array([]);
 
      //obj loader
-    this.objStr = document.getElementById('why_cylinder.obj').innerHTML;
+    this.objStr = document.getElementById('why_ie.obj').innerHTML;
     this.mesh = new OBJ.Mesh(this.objStr); 
 
     this.addMeshData();
@@ -99,4 +99,4 @@ class Cylinder extends Drawable {
   }
 };
 
-export default Cylinder;
+export default Base;
